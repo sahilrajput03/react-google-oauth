@@ -40,8 +40,10 @@ function App() {
               // NOTE: In my most recent I found that the error I was getting about "domain-not-allowed-for-this-clientID" has gone on its own, 
               // probably because it was just some cache error OR GCP takes time to update their server for 15-20mins after
               // we update the "Authorized Javascript Origin" & "Authorized redirect URIs"
-
+              // Docs 1 - Google: https://developers.google.com/identity/gsi/web/guides/subdomains
+              // Docs 2 - Npm: https://www.npmjs.com/package/@react-oauth/google
               // state_cookie_domain="vercel.app"
+
               // NOTE: We can enable below `useOneTap` field to allow sign up new users without interrupting them with a sign-up screen. 
               // Desktop: It shows a modal in top-right saying "Continue as nameOfUser"
               // Mobile: It shows selector that pops up from the bottom of the scren to select the account you want to use to login.
