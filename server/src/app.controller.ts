@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { AppService } from './app.service';
 
@@ -19,11 +19,33 @@ export class AppController {
     });
 
     const payload = ticket.getPayload();
-    const data = await this.appService.login({
-      email: payload.email,
-      name: payload.name,
-      image: payload.picture
-    })
+    console.log('payload?', payload);
+    /* OUTPUT: payload? 
+    {
+      iss: 'https://accounts.google.com',
+      azp: 'ID_1_HERE',
+      aud: 'ID_1_HERE',
+      sub: '113316873974551764257',
+      hd: 'lucify.in',
+      email: 'sahil@lucify.in',
+      email_verified: true,
+      nbf: 1702472493,
+      name: 'Sahil Rajput',
+      picture: 'https://lh3.googleusercontent.com/a/ACg8ocJEuGlN-o6WzpDGTFWtG0RGrmQ1cz1VIY59EJ2tse2PZA=s96-c',
+      given_name: 'Sahil',
+      family_name: 'Rajput',
+      locale: 'en-GB',
+      iat: 1702472793,
+      exp: 1702476393,
+      jti: 'ID_2_HERE'
+    }
+    */
+
+    const data = await this.appService.login(
+      payload.email,
+      payload.name,
+      payload.picture,
+    );
     return data;
   }
 }

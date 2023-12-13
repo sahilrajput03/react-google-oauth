@@ -7,15 +7,7 @@ import { User, UserDocument } from './user.schema';
 export class AppService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async login({
-    email,
-    name,
-    image,
-  }: {
-    email: string;
-    name: string;
-    image: string;
-  }): Promise<any> {
+  async login(email: string, name: string, image: string): Promise<any> {
     const userExists = await this.userModel.findOne({
       email: email,
     });
@@ -25,10 +17,10 @@ export class AppService {
         name,
         image,
       });
-      await createdUser.save()
-      return createdUser
+      await createdUser.save();
+      return createdUser;
     } else {
-      return userExists
+      return userExists;
     }
   }
 }
