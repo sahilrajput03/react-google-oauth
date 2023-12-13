@@ -2,11 +2,28 @@ import './App.css';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useGoogleOneTapLogin } from '@react-oauth/google';
+// import jwt from 'jsonwebtoken'
+
+// Object.assign(window, { jwt })
 
 import { useStore } from './hooks/useStore';
 import Profile from './components/Profile';
 
 const clientId = import.meta.env.VITE_CLIENT_ID
+
+
+
+// Source: https://stackoverflow.com/a/38552302/10012446
+function parseJwt(token: string) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
 
 function App() {
   const { authData, setAuthData } = useStore();
@@ -27,6 +44,8 @@ function App() {
               // Mobile: It shows selector that pops up from the bottom of the scren to select the account you want to use to login.
               // useOneTap
               onSuccess={async (credentialResponse) => {
+                // NOTE: Urgent: Temporarily decoding it here only but for prouduction we would want to create user entry in backend.
+                console.log('credentialResponse?', credentialResponse);
                 /* credentialResponse (OUTPUT): 
                 {
                   "clientId": "id_1_here",
@@ -42,15 +61,15 @@ function App() {
                 */
 
                 console.log('credentialResponse?', credentialResponse);
-                const response = await axios.post(
-                  'http://localhost:3001/login',
-                  {
-                    token: credentialResponse.credential,
-                  }
-                );
-                const data = response.data;
-                // `data.credential` is JSON webtoken
-                console.log('data?', data);
+                // TODO: URGENT: Use this for production i.e, use data that is fetched from our backend server after user is created in backend server.
+                // const response = await axios.post(
+                //   'http://localhost:3001/login',
+                //   {
+                //     token: credentialResponse.credential,
+                //   }
+                // );
+                // const data = response.data;
+                // console.log('data?', data);
                 /* OUTPUT:
                 {
                   "name": "Sahil Rajput",
@@ -60,6 +79,10 @@ function App() {
                   "__v": 0
                 }
                  */
+
+                // TODO: URGENT: Remove below because we are temporarily decoding and using credentials directly in frontend.
+                const userDetails = parseJwt(credentialResponse.credential!)
+                const data = { name: userDetails.name, email: userDetails.email, image: userDetails.picture }
 
                 // Note: Save `authData` to local storage
                 localStorage.setItem('authData', JSON.stringify(data));
