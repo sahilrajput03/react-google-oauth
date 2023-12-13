@@ -37,7 +37,7 @@ function App() {
         <GoogleOAuthProvider clientId={clientId}>
           <div>
             <GoogleLogin
-              state_cookie_domain="vercel.app"
+              // state_cookie_domain="vercel.app"
               // NOTE: We can enable below `useOneTap` field to allow sign up new users without interrupting them with a sign-up screen. 
               // Desktop: It shows a modal in top-right saying "Continue as nameOfUser"
               // Mobile: It shows selector that pops up from the bottom of the scren to select the account you want to use to login.
