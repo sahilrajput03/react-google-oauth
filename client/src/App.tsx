@@ -2,9 +2,6 @@ import './App.css';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useGoogleOneTapLogin } from '@react-oauth/google';
-// import jwt from 'jsonwebtoken'
-
-// Object.assign(window, { jwt })
 
 import { useStore } from './hooks/useStore';
 import Profile from './components/Profile';
