@@ -3,9 +3,12 @@
 Deployed At:
 - https://example-react-google-oauth.vercel.app/
 
-Source:
+Original source:
 - Youtube: [Click here](https://www.youtube.com/watch?v=XjOEKbHkAeo)
 - Github (forked from): [techharvesting/react-google-oauth](https://github.com/techharvesting/react-google-oauth)
+
+Another youtube video:
+- (sound good too - 5mins only) Google OAuth 2.0 Login for React in 5 minutes: [Click here](https://www.youtube.com/watch?v=HtJKUQXmtok)
 
 Npm Libraries:
 - Frontend - https://www.npmjs.com/package/@react-oauth/google
