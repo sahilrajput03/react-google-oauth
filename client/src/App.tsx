@@ -7,6 +7,7 @@ import { useStore } from './hooks/useStore';
 import Profile from './components/Profile';
 
 const clientId = import.meta.env.VITE_CLIENT_ID
+console.log('clientId (from environment variables)?', clientId);
 
 
 
