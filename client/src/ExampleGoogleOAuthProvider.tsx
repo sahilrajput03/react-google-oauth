@@ -1,7 +1,6 @@
 import './App.css';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
 import axios from 'axios';
-import { useGoogleOneTapLogin } from '@react-oauth/google';
 
 import { useStore } from './hooks/useStore';
 import Profile from './components/Profile';
@@ -22,15 +21,21 @@ function parseJwt(token: string) {
   return JSON.parse(jsonPayload);
 }
 
-
-function App() {
+function ExampleGoogleOAuthProvider() {
   const { authData, setAuthData } = useStore();
 
-  // With Zustand we can also destructure `authData` and `setAuthData` like that -
+  // Using zustand selectors:
   // const authData = useStore((state: any) => state.authData);
   // const setAuthData = useStore((state: any) => state.setAuthData);
 
   const isLoggedIn = authData && authData?.name;
+
+  function updateAuthData(data: { name: any; email: any; image: any; }) {
+    // Note: Save `authData` to local storage
+    localStorage.setItem('authData', JSON.stringify(data));
+    setAuthData(data);
+  }
+
   return (
     <div className='App'>
       {!isLoggedIn &&
@@ -45,8 +50,8 @@ function App() {
               // state_cookie_domain="vercel.app"
 
               // NOTE: We can enable below `useOneTap` field to allow sign up new users without interrupting them with a sign-up screen. 
-              // Desktop: It shows a modal in top-right saying "Continue as nameOfUser"
-              // Mobile: It shows selector that pops up from the bottom of the scren to select the account you want to use to login.
+              //       Desktop: It shows a modal in top-right saying "Continue as nameOfUser"
+              //       Mobile: It shows selector that pops up from the bottom of the scren to select the account you want to use to login.
               // useOneTap
               onSuccess={async (credentialResponse) => {
                 // NOTE: Urgent: Temporarily decoding it here only but for prouduction we would want to create user entry in backend.
@@ -89,10 +94,10 @@ function App() {
                 const userDetails = parseJwt(credentialResponse.credential!)
                 const data = { name: userDetails.name, email: userDetails.email, image: userDetails.picture }
 
-                // Note: Save `authData` to local storage
-                localStorage.setItem('authData', JSON.stringify(data));
-                setAuthData(data);
+                updateAuthData(data)
               }}
+
+              // ux_mode='redirect' // Allowed values: 'popup' (default), 'redirect 
 
               onError={() => {
                 console.log('Login Failed');
@@ -107,4 +112,4 @@ function App() {
   );
 }
 
-export default App;
+export default ExampleGoogleOAuthProvider;

@@ -1,5 +1,7 @@
 # React Google Auth - Login with Google
 
+Docs - : [Click here](https://developers.google.com/identity/oauth2/web/guides/how-user-authz-works)
+
 Deployed At:
 - https://example-react-google-oauth.vercel.app/
 

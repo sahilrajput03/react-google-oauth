@@ -1,19 +1,20 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { OAuth2Client } from 'google-auth-library';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
-
-const client = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-);
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { getUserDetails, oAuth2Client } from './initGoogleOauth';
 
 @Controller()
 export class AppController {
-  constructor(private appService: AppService) {}
+  constructor(
+    private appService: AppService,
+    private readonly config: ConfigService,
+  ) {}
 
+  // ! Note: This route is used when auth flow is handled in frontend.
   @Post('/login')
   async login(@Body('token') token): Promise<any> {
-    const ticket = await client.verifyIdToken({
+    const ticket = await oAuth2Client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
@@ -48,4 +49,73 @@ export class AppController {
     );
     return data;
   }
+
+  // ! Note: This route is used when auth flow is handled in backend.
+  @Get('/auth/google/callback')
+  async AuthGoogleCallback(@Query() query): Promise<any> {
+    console.log('query?', query);
+    /* OUTPUT: 
+    { code: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      scope: 'email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+      authuser: '1',
+      hd: 'lucify.in',
+      prompt: 'consent' }
+     */
+
+    const { code } = query;
+    // console.log('code?', code); // string
+
+    try {
+      const { tokens } = await oAuth2Client.getToken(code);
+      // { access_token, expiry_date, refresh_token, ...more}
+      oAuth2Client.setCredentials(tokens);
+      // console.log('tokens?', tokens);
+
+      // Use the OAuth2 client to fetch user details
+      const user = await getUserDetails();
+      // NOTE: Save all below fields to database.
+      //       Also, in future you might want to store access_token, refresh_token, expiry_date, etc as well for fetching details anytime later.
+      console.log('name?', user.name);
+      console.log('email?', user.email);
+      console.log('picture?', user.picture);
+      console.log('googleAccountId?', user.id); // googleAccountId
+    } catch (error) {
+      if (error.response.data.error === 'invalid_grant') {
+        // Note: `invalid_grant` means you tried to use the same authorization code to get more than one developer token.
+        console.error('PROJECT_ERROR?: Google OAuth Token is expired.');
+      }
+    }
+  }
 }
+
+/* 
+
+Requests with Axios (NOT TESTED)
+
+    // Google OAuth configuration
+    const googleConfig = {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      redirectUri: 'http://localhost:3001/auth/google/callback', // Adjust the URL based on your setup
+      scope: 'https://www.googleapis.com/auth/plus.login',
+    };
+    console.log('googleConfig?', googleConfig);
+
+    // Exchange the authorization code for an access token
+    try {
+      const tokenResponse = await axios.post(
+        'https://oauth2.googleapis.com/token',
+        {
+          code,
+          client_id: googleConfig.clientId,
+          client_secret: googleConfig.clientSecret,
+          redirect_uri: googleConfig.redirectUri,
+          grant_type: 'authorization_code',
+        },
+      );
+      console.log('tokenResponse?', tokenResponse);
+    } catch (error) {
+      console.log('error?', error.response.data);
+    }
+
+*/
