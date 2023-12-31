@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { getUserDetails, oAuth2Client } from './initGoogleOauth';
@@ -62,11 +63,8 @@ export class AppController {
       prompt: 'consent' }
      */
 
-    const { code } = query;
-    // console.log('code?', code); // string
-
     try {
-      const { tokens } = await oAuth2Client.getToken(code);
+      const { tokens } = await oAuth2Client.getToken(query.code);
       // { access_token, expiry_date, refresh_token, ...more}
       oAuth2Client.setCredentials(tokens);
       // console.log('tokens?', tokens);
