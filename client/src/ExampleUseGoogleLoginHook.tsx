@@ -35,6 +35,8 @@ function Login() {
     // redirect_uri: 'http://localhost:3000/auth/callback',
     redirect_uri: 'http://localhost:3001/auth/google/callback',
     flow: 'auth-code'
+    // TODO: Check if we do want to access `phoneNumber` from the google OAuth as well?
+    // scope: 'https://www.googleapis.com/auth/user.phonenumbers.read'
   });
 
   return <button onClick={handleLogin}>Sign in with Google 🚀</button>

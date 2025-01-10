@@ -3,7 +3,10 @@ import { AppService } from './app.service';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { getUserDetails, oAuth2Client } from './initGoogleOauth';
+import {
+  getUserDetails as getGoogleUserDetails,
+  oAuth2Client,
+} from './initGoogleOauth';
 
 @Controller()
 export class AppController {
@@ -70,7 +73,7 @@ export class AppController {
       // console.log('tokens?', tokens);
 
       // Use the OAuth2 client to fetch user details
-      const user = await getUserDetails();
+      const user = await getGoogleUserDetails();
       // NOTE: Save all below fields to database.
       //       Also, in future you might want to store access_token, refresh_token, expiry_date, etc as well for fetching details anytime later.
       console.log('name?', user.name);

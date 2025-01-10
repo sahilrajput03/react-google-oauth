@@ -12,7 +12,7 @@ export const initOAuth2Client = (
   oAuth2Client = new OAuth2Client(
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
-    GOOGLE_REDIRECT_URL,
+    GOOGLE_REDIRECT_URL, // Note: Giving redirectUrl here is requried otherwise error is thrown when we call `oAuth2Client.getToken()`
   );
 };
 
