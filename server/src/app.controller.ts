@@ -80,6 +80,9 @@ export class AppController {
       console.log('email?', user.email);
       console.log('picture?', user.picture);
       console.log('googleAccountId?', user.id); // googleAccountId
+
+      // We can redirect to frontend now...
+      // return res.redirect(FRONTEND_URL);
     } catch (error) {
       if (error.response.data.error === 'invalid_grant') {
         // Note: `invalid_grant` means you tried to use the same authorization code to get more than one developer token.
